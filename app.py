@@ -13,7 +13,7 @@ import os
 
 from dotenv import load_dotenv
 load_dotenv()
-google_api_key = os.environ.get('GOOGLE_API_KEY')
+api_key = os.environ.get('GEMINI_API_KEY')
 
 
 def read_pdf(pdf):
@@ -38,7 +38,7 @@ def create_chunks(text):
 def get_answer(vectorstore, query):
     docs = vectorstore.similarity_search(query=query,k=3)
     
-    llm = ChatGoogleGenerativeAI(model='gemini-pro', google_api_key='AIzaSyAOctAVdHUr1Y7n1mlv8zbJijxQkUmM6ts', convert_system_message_to_human=True, temperature=0)
+    llm = ChatGoogleGenerativeAI(model='gemini-pro', google_api_key=api_key, convert_system_message_to_human=True, temperature=0)
     chain = load_qa_chain(llm=llm, chain_type= "stuff")
 
     response = chain.run(input_documents = docs, question = query)
@@ -73,7 +73,7 @@ def main():
         chunks = create_chunks(text)
 
         # Loading Gemini Pro embeddings
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key='AIzaSyAOctAVdHUr1Y7n1mlv8zbJijxQkUmM6ts')
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=api_key)
 
         #Store the chunks in vector db
         vectorstore = Chroma.from_texts(chunks,embedding=embeddings)
